@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>文件拖拽上传</title>
+<style>
+#whole{
+ width: 50%;
+ height: 50%;
+ border:1px dashed #000;
+ position:absolute;
+ margin: 10% auto;
+ left: 25%;
+ text-align:center;
+ 
+ display:block;
+ border:1px solid #bfd1eb ;
+ 
+}
+#box{
+    width: 50%;
+    height: 30%;
+    position: absolute;
+    float: left;
+    left: 23%;
+    top: 30%;
+    margin: 0% auto;
+    text-align: center;
+   
+    border:10px solid #bfd1eb;background:#f3faff；
+    font:20px/300px '微软雅黑';
+}
+
+</style>
+<script>
+   var ws = new WebSocket("ws://47.104.166.27:6018");
+  console.log("ok");  
+  console.log (ws.readyState);         
+               ws.onopen = function()
+               {
+                  // Web Socket 已连接上，使用 send() 方法发送数据
+                  console.log("service is connected");
+                  // var requestOne = '2A' 
+                  // var lengthOne = requestOne.length;
+                  // var dataObjOne = {'request':requestOne,'length':lengthOne};
+                  // dataJsonOne = JSON.stringify(dataObjOne); //数据打包成json
+                  // console.log(dataJsonOne);
+                  // ws.send(dataJsonOne);
+                  // console.log("sended");
+                 
+               };
+                
+               ws.onmessage = function (evt) 
+               { 
+                  var received_msg = evt.data;
+                  console.log(received_msg);
+                  // console.log(typeof(received_msg));
+                  // var answer = JSON.parse(received_msg);
+                  // console.log(answer.山东.济南项目);
+
+                 // console.log(String.fromCharCode(received_msg));
+                  //var answer = JSON.parse(received_msg);
+                 // console.log(received_msg.replace(/\\/g, "%"));
+                 //str = decodeURI(received_msg.replace(/\\u/g, '%u'))
+
+                //  received_msg = received_msg.split('\\u');
+                //  var str ='';
+                //  console.log(received_msg);
+                //  for(var i=0;i<received_msg.length;i++)
+                // {
+                //     str+=String.fromCharCode(parseInt(received_msg[i],16).toString(10));
+                // }
+                //  console.log(str);
+                //  var place ;
+                //  var project ;
+                //  var final = {};
+                //  var data = str.split('。');
+                //  console.log(data.length);
+                //  for (var j=0;j<data.length-1;j++){
+                //      place = data[j].split('，')[0];
+                //      project = data[j].split('，')[1];
+                //      console.log(place);
+                //      console.log(project);
+                //      //final.push(place,project);
+                //     //place = data[j].split('，');
+                //     //console.log(place);
+                //     final[place] = project;
+                //  }
+                //  console.log(final);
+
+
+
+                // var reader = new FileReader();
+                // reader.onload=function(eve){
+                //         //判断文件是否读取完成
+                //          if(eve.target.readyState==FileReader.DONE)
+                //          {
+
+                //             //var img =document.createElement("img");
+                
+                //             console.log(this.result);
+                       
+                //            // document.getElementById("show").appendChild(img);
+                //          }
+                // };
+                // reader.readAsDataURL(evt.data);
+
+
+                 
+                //   var data = JSON.parse(received_msg).data;
+                //   if(answer != 'AA'){
+                //     if(data == '00'){
+                //         console.log("登陆成功");
+                //         //alert("登陆成功");
+                //         jumpPage('./upload.html');
+                //     }
+                //     else if(data == '01'){
+                //         console.log("用户不存在");
+                //     }
+                //     else if(data == '02'){
+                //         console.log("密码错误");
+                //     }
+                    
+                    
+                    
+                // }
+                // else{
+                //     console.log("数据校验未通过");
+                // }
+
+               };
+                
+               ws.onclose = function()
+               { 
+                  // 关闭 websocket
+                  console.log("连接已关闭..."); 
+               };
+  //ftp 文件上传和下载
+//   var Client = require('ftp');
+//   var fs = require('fs');
+//   var c = new Client();
+//   var connectionProperties = {
+//     host: "47.104.166.27",
+//     user: "test",
+//     password: "123456"
+// };
+// c.on('ready', function() {
+//     console.log("ftp");
+//     c.get('./liqing/download/my.log', function(err, stream) {
+//       if (err) throw err;
+//       stream.once('close', function() { c.end(); });
+//       stream.pipe(fs.createWriteStream('my.log',{encoding:'utf8'}));
+//     });
+//   });
+//   // connect to localhost:21 as anonymous
+//   c.connect(connectionProperties);
+
+let Client = require('ssh2-sftp-client');
+let gaze = require('gaze');
+var remote=require('electron').remote;
+var userCardId=remote.getGlobal('sharedObject').name;
+var remotefilePath;
+console.log('********************************');
+console.log(userCardId);
+console.log('********************************');
+let sftp = new Client();
+    sftp.connect({
+        host: '47.104.166.27',
+        port: '22',
+        username: 'sun',
+        password: '123456'
+    }).then(() => {
+        console.log("ftp connected");
+    }).then(() =>{
+        console.log("上传完成");
+        var demoObj = {'request':'4A','method':'00','cardId':'T0038','stations':'1','station1':'2','ports':'6','pile1':'6002','pile2':'6000','port1':'6004','port2':'6006','port3':'6008','port4':'6010','IP1':'192.168.1.166','IP2':'192.168.167','fileCount':'2','file1':'ctrcfg.ini','size1':'6000','file2':'cfg.ini','size2':'7000'};
+        demoJson = JSON.stringify(demoObj); //数据打包成json
+        console.log(demoJson);
+        ws.send(demoJson);
+        console.log("已回复");
+    }).catch((err) => {
+        console.log(err, 'catch error');
+    });
+  
+
+
+  //文件拖拽
+ window.onload = function () {
+  var oBox = document.getElementById('box');
+  var oshowword = document.getElementById('show');
+  var oM = document.getElementById('m1');
+  oBox.ondragenter = function(){
+    oBox.innerHTML = '<br>' + '请释放鼠标';
+  };
+  oBox.ondragover = function(){
+   return false;
+  };
+  oBox.ondragleave = function(){
+    oBox.innerHTML = '<br>' + '请将文件拖拽到此区域';
+    console.log('leave');
+  };
+  
+  oBox.ondrop = function(ev){
+   var oFile = ev.dataTransfer.files[0];
+   var filePath = oFile.path.replace(/\\/g,"\/");
+   remotefilePath = './' + userCardId + '/' + oFile.name;
+   console.log('------------------------------------');
+   console.log('File(s) you dragged here: ',filePath);
+   console.log('File(s) you put for: ',remotefilePath);
+   console.log('------------------------------------');
+   //sftp.put(filePath,remotefilePath);
+   
+  //  for(let f of ev.dataTransfer.files){
+  //    filePath = f.path.replace(/\\/g,"\/");
+  //    console.log('File(s) you dragged here: ',filePath);
+  //    sftp.put(filePath,'./T0038/pileMonitorUI');
+  //  }
+  // console.log(oFile);
+   //console.log(oFile.name);
+   console.log(oFile.size);
+  };
+ };
+</script>
+<script>
+    function toUnicode(s){ 
+        return s.replace(/([\u4E00-\u9FA5]|[\uFE30-\uFFA0])/g,function(){
+          return "\\u" + RegExp["$1"].charCodeAt(0).toString(16);
+        });
+      }
+    //开启 websocket
+
+</script>
+</head>
+<body>
+<div id="whole">
+<meter id="m1" value="0" min="0" max="100"></meter>
+ <div id="box">
+        <!-- 请将文件拖拽到此区域 -->
+     <br>请将文件拖拽到此区域
+     <!-- <font size="2" face="arial" color="black">请将文件拖拽到此区域</font> -->
+</div>
+ </div>
+</body>
+</html>

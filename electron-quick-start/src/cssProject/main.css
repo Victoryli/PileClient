@@ -1,0 +1,311 @@
+*{
+    margin: 0%;
+    padding: 0%;
+}
+#topContainer{
+    height: 15%;
+    padding:0;
+    margin:0;
+    width:100%;
+    background: #555555;
+ 
+    
+   
+}
+#leftContainer{
+    width: 10%;
+    height: 90%;
+    float: left;
+    left: 0;
+    background: #555555;
+    position: absolute;  
+}
+#mainContainer{
+    width: 90%;
+    height: 90%;   
+    float: left;
+    margin-left: 10%;
+    background: #d4d2d4;
+    position: absolute;
+   
+    
+}
+
+
+.box {
+    float:left;
+    height:66.6%;
+    width: 33.3%;
+    left:  33.3%;
+    z-index: 1;   
+    margin:2em 10px 4em; 
+    background:#fff;
+    position: absolute;
+    display: none;
+}
+#box-top{
+    position: relative;
+    height: 8%;
+    background: #cac8c8;
+    border-bottom: 1px solid #a7a5a5;
+}
+#closefile{
+    position: relative;
+    float: right;
+    top: 26%;
+    right: 4%;
+}
+#box-container{
+    position: relative;
+    height: 80%;
+    margin-bottom: 5%;
+   
+  
+}
+.filelist{
+    position: relative;
+    height: 15%;
+    border-bottom:1px solid #a7a5a5;
+}
+.filelist img{
+    position: relative;
+    float: left;
+    top: 10%;
+    
+}
+.filename{
+    position: relative;
+    top: 8%;
+}
+.filesize{
+    position: relative;
+    color:gray;
+}
+#box-container-filebutton{
+    position: relative;
+    height: 15%;
+    width: 86%;
+    margin: 0 auto; 
+    
+}
+/* .buttonFile{
+    position: relative;
+    height: 50%;
+    width: 30%;
+    background-color: #398ceb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    top: 10%;
+    outline: none;  
+}
+.inputFile{
+    position: relative;
+    top: -10%;
+    float: left;
+    z-index: 10;
+    
+}
+.buttonFile:active{
+    position: relative;
+    height: 50%;
+    width: 30%;
+    background-color: #5da8f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    top: 10%;
+    outline: none;
+
+    
+} */
+.file {
+    position: relative;
+    display: inline-block;
+    background-color: #398ceb;
+    color: white;
+    border: 1px solid  #398ceb;
+    border-radius: 5px;
+    padding: 4px 15px;
+    overflow: hidden;
+    top: 15%;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 12px;
+}
+.file input {
+    position: absolute;
+    font-size: 80px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:active {
+    background-color: #569ae9;
+    color: white;
+    border: 1px solid  #398ceb;
+    text-decoration: none;
+}
+#dragtext{
+    position: relative;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: grey;
+    margin-top: 20px;
+    margin-left: 10px;
+    
+}
+#box-container-fileshow{
+    position: relative;
+    height: 80%;
+    width: 86%;
+    border: 1px solid #c0bbbc;
+    background: #f0eded;
+    border-radius: 5px;
+    margin: 0 auto;
+    overflow-y: auto;
+    
+}
+#box-bottom{
+    position: relative;
+    height: 8%;
+    background:#cac8c8;
+    border-top: 1px solid #a7a5a5;
+    
+}
+.cancle{
+    position: relative;
+    float: right;
+    right: 2%;
+    height: 50%;
+    width: 10%;
+    background-color: #f8f9fa;
+    color: rgb(26, 25, 25);
+    border: none;
+    border-radius: 5px;
+    top: 25%;
+    outline: none;  
+}
+.cancle:active {
+    background-color: #d3cece;
+}
+.ensure{
+    position: relative;
+    float: right;
+    right: 3%;
+    height: 50%;
+    width: 10%;
+    background-color: #398ceb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    top: 25%;
+    outline: none;  
+}
+.ensure:active{
+    background-color: #569ae9;
+}
+table.gridtable {
+
+    font-family: verdana,arial,"宋体";
+
+    font-size:12px;
+
+    color:#333333;
+
+    border-width: 1px;
+
+    border-color: #666666;
+
+    border-collapse: collapse;
+
+}
+
+table.gridtable th {
+
+    border-width: 1px;
+
+    padding: 8px;
+
+    border-style: solid;
+
+    border-color: #666666;
+
+    background-color: #dedede;
+
+}
+
+table.gridtable td {
+
+    border-width: 1px;
+
+    padding: 8px;
+
+    border-style: solid;
+
+    border-color: #666666;
+
+    background-color: #ffffff;
+    
+}
+
+#city {
+    padding-right: 1.8rem;
+    
+    font-size: 1rem;
+    border:none;
+   
+    outline: none;
+    top: 10%;
+    left: 7.5%;
+    position: absolute;
+    /*去掉默认的下拉三角*/
+    appearance:none;  
+    -moz-appearance:none;  
+    -webkit-appearance:none;
+    /*添加下拉三角图标*/
+    /* background: url("../img/downs.png") no-repeat right center transparent; */
+}
+
+
+#project {
+    padding-right: 1.8rem;
+    
+    font-size: 1rem;
+    border:none;
+   
+    outline: none;
+   
+    left: 7.5%;
+    top: 30%;
+    position: absolute;
+   
+    /*去掉默认的下拉三角*/
+    appearance:none;  
+    -moz-appearance:none;  
+    -webkit-appearance:none;
+    /*添加下拉三角图标*/
+    /* background: url("../img/downs.png") no-repeat right center transparent; */
+
+}
+
+
+#station {
+    padding-right: 1.8rem;
+    
+    font-size: 1rem;
+    border:none;
+    outline: none;
+  
+    position: absolute;
+    left: 7.5%;
+    top: 50%;
+   
+    /*去掉默认的下拉三角*/
+    appearance:none;  
+    -moz-appearance:none;  
+    -webkit-appearance:none;
+    /*添加下拉三角图标*/
+    /* background: url("../img/downs.png") no-repeat right center transparent; */
+}
+

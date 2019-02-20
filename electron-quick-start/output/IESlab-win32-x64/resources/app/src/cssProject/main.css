@@ -1,0 +1,137 @@
+
+*{
+    margin: 0%;
+    padding: 0%;
+}
+#topContainer{
+    height: 15%;
+    padding:0;
+    margin:0;
+    width:100%;
+    background: #555555;
+ 
+    
+   
+}
+#leftContainer{
+    width: 10%;
+    height: 90%;
+    float: left;
+    left: 0;
+    background: #555555;
+    position: absolute;  
+}
+#mainContainer{
+    width: 90%;
+    height: 90%;   
+    float: left;
+    margin-left: 10%;
+    background: #d4d2d4;
+    position: absolute;
+   
+    
+}
+table.gridtable {
+
+    font-family: verdana,arial,sans-serif;
+
+    font-size:11px;
+
+    color:#333333;
+
+    border-width: 1px;
+
+    border-color: #666666;
+
+    border-collapse: collapse;
+
+}
+
+table.gridtable th {
+
+    border-width: 1px;
+
+    padding: 8px;
+
+    border-style: solid;
+
+    border-color: #666666;
+
+    background-color: #dedede;
+
+}
+
+table.gridtable td {
+
+    border-width: 1px;
+
+    padding: 8px;
+
+    border-style: solid;
+
+    border-color: #666666;
+
+    background-color: #ffffff;
+    
+}
+
+#city {
+    padding-right: 1.8rem;
+    
+    font-size: 1rem;
+    border:none;
+   
+    outline: none;
+    top: 10%;
+    left: 7.5%;
+    position: absolute;
+    /*去掉默认的下拉三角*/
+    appearance:none;  
+    -moz-appearance:none;  
+    -webkit-appearance:none;
+    /*添加下拉三角图标*/
+    /* background: url("../img/downs.png") no-repeat right center transparent; */
+}
+
+
+#project {
+    padding-right: 1.8rem;
+    
+    font-size: 1rem;
+    border:none;
+   
+    outline: none;
+   
+    left: 7.5%;
+    top: 30%;
+    position: absolute;
+   
+    /*去掉默认的下拉三角*/
+    appearance:none;  
+    -moz-appearance:none;  
+    -webkit-appearance:none;
+    /*添加下拉三角图标*/
+    /* background: url("../img/downs.png") no-repeat right center transparent; */
+
+}
+
+
+#station {
+    padding-right: 1.8rem;
+    
+    font-size: 1rem;
+    border:none;
+    outline: none;
+  
+    position: absolute;
+    left: 7.5%;
+    top: 50%;
+   
+    /*去掉默认的下拉三角*/
+    appearance:none;  
+    -moz-appearance:none;  
+    -webkit-appearance:none;
+    /*添加下拉三角图标*/
+    /* background: url("../img/downs.png") no-repeat right center transparent; */
+}
+

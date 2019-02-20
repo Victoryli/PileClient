@@ -1,0 +1,181 @@
+<!DOCTYPE html>  
+
+<html lang="en">  
+
+<head>  
+
+    <meta charset="UTF-8">  
+
+    <title>IESlab</title>  
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../cssProject/index.css">
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <!-- <script type="text/javascript" src="http://counter.sina.com.cn/ip/" charset="gb2312"></script>   -->
+    
+    <script src="../jsProject/index.js"></script>
+    
+</script>   
+</head>  
+ 
+<body>  
+    
+  
+        <div class="login" > 
+            <h1 id="title">IESlab</h1> 
+            <input type="text"  placeholder="用户名" name="u" id='username'></input> <br> <br>
+
+            <input type="password"  placeholder="密码" name="p" id="passwd"></input>  
+
+            <p id="usrpasswd">
+            <button class="pure-button pure-button-primary" type='button' onclick="login('username','passwd')" >登录</button> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="pure-button pure-button-primary" type="submit" onclick="jumpPage('./signup.html')">注册</button>
+           </p>
+
+          </div>
+
+  <script style="text/javascript">
+  // var socket = io.connect('http://47.104.166.27:6018');
+  // socket.on('connection', function (data) {
+  // // console.log("ok");
+  // // socket.emit('news', { hello: 'world' });
+  // socket.emit('request', /* */);
+  
+  // });
+  const ipc = require('electron').ipcRenderer;
+  var ws = new WebSocket("ws://47.104.166.27:6018"); 
+  console.log (ws.readyState);         
+               ws.onopen = function()
+               {
+                  // Web Socket 已连接上，使用 send() 方法发送数据
+                  console.log("service is connected");
+                  
+                 
+                  // var demoObj = {'request':'4A','method':'00','cardId':'T0038','stations':'2','station1':'2','station2':'1','pile1':'6002','pile1':'6000','pile2':'6001','fileCount':'2','file1':'ctrcfg.ini','size1':'6000','file2':'cfg.ini','size2':'7000'};
+                  // var demoObj = {'request':'4A','method':'00','cardId':'T0038','stations':'1','station1':'2','ports':'6','pile1':'6002','pile2':'6000','port1':'6004','port2':'6006','port3':'6008','port4':'6010','IP1':'192.168.1.166','IP2':'192.168.167','fileCount':'2','file1':'ctrcfg.ini','size1':'6000','file2':'cfg.ini','size2':'7000'};
+                  // demoJson = JSON.stringify(demoObj); //数据打包成json
+                  // console.log(demoJson);
+                  // ws.send(demoJson);
+                
+                 
+               };
+                
+               ws.onmessage = function (evt) 
+               { 
+                  var received_msg = evt.data;
+                  console.log(received_msg);
+                //   var answer = JSON.parse(received_msg).answer;
+                //   var data = JSON.parse(received_msg).data;
+                  
+                //   if(answer != 'AA'){
+                //     if(data == '00'){
+                //         console.log("登陆成功");
+                //         //alert("登陆成功");
+                //         jumpPage('./upload.html');
+                //     }
+                //     else if(data == '01'){
+                //         console.log("用户不存在");
+                //     }
+                //     else if(data == '02'){
+                //         console.log("密码错误");
+                //     }
+                    
+                    
+                    
+                // }
+                // else{
+                //     console.log("数据校验未通过");
+                // }
+
+               };
+                
+               ws.onclose = function()
+               { 
+                  // 关闭 websocket
+                  alert("连接已关闭..."); 
+               };
+
+  function login(userid,passwdid){
+    var request = '1A'; //请求目的
+    var userLength;
+    var user = document.getElementById(userid).value;
+    var passwd = document.getElementById(passwdid).value;
+    userLength = user.length;
+    if (!isNaN(user)){
+      if(user.length != 11){
+        console.log("输入的手机号码不完整");
+        return false;
+      }
+      else{
+      userMethod = '01';
+      console.log("用户输入手机号");
+      }
+    }
+    else{
+      if(/\d+/.test(user)){
+        userMethod = '02';
+        console.log('用户输入工号');
+      }
+      else{
+        userMethod = '00';
+        console.log('用户输入姓名');
+        userLength = user.length * 3;
+      }
+    }
+    
+    //var ipt = document.getElementById('ipt')
+
+    
+      
+   
+  
+
+    var length = request.length + userMethod.length + userLength + passwd.length;
+    var dataObj = {'request':request,'usermethod':userMethod,'user':user,'passwd':passwd,'length':length};
+    dataJson = JSON.stringify(dataObj); //数据打包成json
+   // console.log(dataJson);
+    ws.send(dataJson);
+    console.log(userLength);
+    console.log("sended");
+   }
+          
+  </script> 
+  <script>
+    //lowdb 接管桩信息存储文件
+   // initLowdb();
+   const low = require('lowdb')
+    const FileSync = require('lowdb/adapters/FileSync')
+    const adapterProvince = new FileSync('province.json')//省
+    const adapterProject = new FileSync('project.json')//项目
+    const adapterStation = new FileSync('station.json')//站点
+    const adapterPile = new FileSync('pile.json')//分桩
+    const province = low(adapterProvince)
+    const project = low(adapterProject)
+    const station = low(adapterStation)
+    const pile = low(adapterPile)
+    // Set some defaults (required if your JSON file is empty)
+    var str = {"province":[{"山东":[{"济南奔驰":
+    [{"趵突泉":["03710002","6007","192.168.1.167","03710002","6008","192.168.1.167"]
+  },{"大明湖":["03710002","6007","192.168.1.167","03710002","6008","192.168.1.167","03710002","6009","192.168.1.167"]
+    }]}]},{"河南":[{"景政电力":
+    [{"中原第一城":["03710002","6007","192.168.1.167"]
+  },{"江泰天宇国际":["03710002","6008","192.168.1.167"]
+    }]}]},{"福建":[{"厦门机场":
+    [{"北门":["03710002","6007","192.168.1.167"]
+  },{"南门":["03710002","6007","192.168.1.167"]
+    }]},{"福州公交":
+    [{"北门":["03710002","6007","192.168.1.167"]
+  },{"南门":["03710002","6007","192.168.1.167"]
+    }]}]}]};
+    
+    paserJson(str,province,project,station,pile);
+  
+    
+    
+  </script>
+    
+
+</body>  
+
+</html>

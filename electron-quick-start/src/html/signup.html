@@ -1,0 +1,176 @@
+<!DOCTYPE html>  
+
+<html lang="en">  
+
+<head>  
+
+    <meta charset="UTF-8">  
+
+    <title>IESlab</title>  
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../cssProject/signup.css">
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <script src="../jsProject/index.js"></script>
+</script>   
+</head>  
+ 
+<body>  
+    
+  
+        <div class="login" > 
+            <h1 id="title">IESlab</h1> 
+            <p>工号<font size="1.5" face="arial" color="red" id="joberror"  >工号格式错误！</font></p>
+            <input type="text"  placeholder="5位工号" name="u" id='jobnumber' value="T0038"></input> 
+             <br> 
+            <p>姓名(英文全拼)<font size="1" face="arial" color="red" id="nameerror">    姓名中含有中文!</font></p>
+            <input type="text"  placeholder="不能含有中文" name="name" id="username" value="liqing"></input> <br> 
+            <p>手机号<font size="1" face="arial" color="red" id="phoneerror">    手机号不完整！</font></p>
+            <input type="text"  placeholder="11位手机号" name="phone" id="phonenumber" value="15726429596"></input> <br> 
+            <p>设置密码<font size="1" face="arial" color="red" id="passlenerror">    密码长度小于6位！</font></p>
+            <input type="password"  placeholder="密码长度大于6位" name="passwdone" id="passwdfirst" ></input><br> 
+            <p>确认密码<font size="1" face="arial" color="red" id="passcomerror">    两次输入密码不一致！</font></p>
+            <input type="password"  placeholder="密码长度大于6位" name="passwdtwo" id="passwdsecond"></input> <br> 
+
+            <p id="usrpasswd">
+            <button class="pure-button pure-button-primary" type='button' onclick="signup('jobnumber','username','phonenumber','passwdfirst','passwdsecond')" >确认</button> 
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="pure-button pure-button-primary" type="button" onclick="jumpPage('./index.html')">返回</button>
+            <button class="pure-button pure-button-primary" type="button" onclick="jumpPage('./upload.html')">test</button>
+           </p>
+
+          </div>
+
+  <script style="text/javascript">
+  var ws = new WebSocket("ws://47.104.166.27:6018");
+  console.log("ok");  
+  //var a = "你好，冬天";
+  console.log (ws.readyState);         
+               ws.onopen = function()
+               {
+                  // Web Socket 已连接上，使用 send() 方法发送数据
+                  //ws.send("1");
+                  console.log("service is connected");
+                  //ws.send(a);
+               };
+                
+               ws.onmessage = function (evt) 
+               { 
+                  var received_msg = evt.data;
+                  console.log(received_msg);
+                  console.log(typeof(received_msg));
+                //   var obj = recvJson.parseJSON();
+                //   console.log(obj);
+                //   console.log(obj[0].answer);
+                //console.log(received_msg[0]);
+                console.log(JSON.parse(received_msg));
+                var answer = JSON.parse(received_msg).answer;
+                var data = JSON.parse(received_msg).data;
+                if(answer != 'AA'){
+                    if(data == '00'){
+                        console.log("注册成功");
+                        alert("注册成功");
+                    }
+                    else if(data == '01'){
+                        console.log("非花名册注册人员");
+                    }
+                    else if(data == '02'){
+                        console.log("注册信息与数据库信息不匹配");
+                    }
+                    else if(data == '03'){
+                        console.log("该用户已注册");
+                        alert("您已注册");
+                    }
+                    
+                    
+                }
+                else{
+                    console.log("数据校验未通过");
+                }
+
+
+                  //var jsonarray= $.parseJSON(received_msg);
+                 // console.log(jsonarray);
+                 // console.log(jsonarray.answer);
+                 // console.log(jsonarray.data); 
+                  //00:注册成功 01:非花名册注册人员 02:注册信息与数据库信息不匹配 03:用户已注册
+
+               };
+                
+               ws.onclose = function()
+               { 
+                  // 关闭 websocket
+                  console.log("连接已关闭..."); 
+               };
+  function signup(jobId,userId,phoneId,passwdFirstId,passwdSecondId){
+    var request = '0A';
+    var job = document.getElementById(jobId).value;
+    var user = document.getElementById(userId).value;
+    var phone = document.getElementById(phoneId).value;
+    var passwdFirst = document.getElementById(passwdFirstId).value;
+    var passwdSecond = document.getElementById(passwdSecondId).value;
+    if((job.length != 5)  || (phone.length != 11) || ((passwdFirst.length <6) && (passwdSecond.length < 6)) || (passwdFirst != passwdSecond)){
+    if(job.length != 5){
+        console.log('工号错误');
+        $('#joberror').show();
+        
+    }
+    // if(/.*[\u4e00-\u9fa5]+.*$/.test(user)){
+    //     console.log("用户名不能含中文");
+    //     $('#nameerror').show();
+    // }
+    if(phone.length != 11){
+        console.log("手机号不完整");
+        $('#phoneerror').show();
+    }
+    
+    if((passwdFirst.length <6) && (passwdSecond.length < 6)){
+        console.log('密码长度不足6位');
+        $('#passlenerror').show();
+    }
+    if(passwdFirst != passwdSecond){
+        console.log('两次输入密码不一致');
+        $('#passcomerror').show();
+    }
+    // console.log(passwdSecond.length);
+    // console.log(phone.length);
+    // console.log(request.length);
+
+    }
+
+    else{
+    $('#joberror').hide();
+    $('#nameerror').hide();
+    $('#phoneerror').hide();
+    $('#passlenerror').hide();
+    $('#passcomerror').hide();
+    var length = request.length + user.length + job.length + phone.length + passwdSecond.length;
+    
+    var dataObj = {'request':request,'cardID':job,'name':user,'phoneNumber':phone,'passwd':passwdSecond,'length':length};
+    dataJson = JSON.stringify(dataObj); //数据打包成json
+    console.log(length);
+    // $('#jobnumber').val("");
+    // $('#username').val("");-
+    // $('#phonenumber').val("");
+    // $('#passwdfirst').val("");
+    // $('#passwdsecond').val("");
+    ws.send(dataJson);
+    console.log("sended");
+    console.log(dataJson);
+    // $.each(jsonarray, function (i, n)
+    // {
+    //   console.log(n.request);
+    // });
+    
+    //alert("发送成功");
+    }
+    
+    
+   }
+            
+  </script> 
+    
+
+</body>  
+
+</html>

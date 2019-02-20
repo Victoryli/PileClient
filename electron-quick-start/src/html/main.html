@@ -1,0 +1,486 @@
+<!doctype html>
+ <html lang = "zh-CN">
+ <head>
+
+     <meta charset="utf-8">
+     <meta name="description" content="this is a checkbox example">
+	 <meta name="keywords" content="checkbox,html,js">
+	 <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+	 <script src="../jsProject/mainjs/jquery.shadow.js"></script>
+	 <script src="../jsProject/mainjs/main.js"></script>
+	 <link rel="stylesheet" href="../cssProject/main.css">
+	 <link rel="stylesheet" href="../cssProject/jquery.shadow.css" />
+     <title>主界面</title>
+
+     <script type="text/javascript">
+         window.onload = function () {
+             document.getElementById('city').addEventListener('change',function(){
+                 console.log("当前选项是:"+this.value);
+             },false);
+         }
+	 </script>
+	 <script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('.box').shadow('raised');
+		});
+	</script>
+ </head>
+ <body>
+	 <div id="topContainer">
+		<br>
+		IESlab
+		<br>
+	 </div>
+	 <div id="leftContainer">
+		<form name="form1" action="" method="get">
+			<!-- <p >省份</p> -->
+         <select id = "city" onChange="setProject(this,this.form.projects);">
+				 
+			 <option class="cityOption" value="0">--选择省--</option>
+			
+			
+                     
+		 </select>
+		 <!-- <p >项目</p> -->
+		
+		
+		 <select name="projects" id="project" onChange="setStation(this,this.form.stations);">
+			 <option value="0">--选择项目--</option>
+		 </select>
+		
+		 
+		<!-- <p>站点：</p> -->
+		 <select name="stations" id="station" onChange="showPiles(this)">
+			<option value="0">--选择站点--</option>
+		</select>
+		</form>
+		
+	 </div>
+
+	 <div id="mainContainer">
+		<table width='100%' class="gridtable" id="pileTable">
+
+			<tr>
+				<th><input name="pile" type="checkbox" id="checkall" value=""  /></th><th>桩号</th><th>端口号</th><th>本机IP</th><th>充电状态</th><th>上次更新程序时间</th><th>更新程序名</th><th>操作</th>
+			</tr>
+			
+			
+		</table>
+		</div>
+		<div class="box">
+			<div id="box-top">上传文件
+					<!-- <button id="closefile">关闭</button> -->
+			</div>
+			
+			<div id="box-container">
+				<div id="box-container-filebutton">
+						<a href="javascript:;" class="file">选择文件
+						<input type="file" name="" id="" onchange="inputFile(this)" />
+						</a>
+					<span id="dragtext">或拖拽文件到下框</span>
+				</div>
+				
+				<div id="box-container-fileshow">
+					<!-- <div class="filelist">
+						<img src="../img/fileicon2.png" width="30px" height="30px">
+						<span class="filename">ctrcfg.ini  <span class="filesize">(28.5k)</span></span> 
+					</div> -->
+					
+				</div>
+			</div>
+			<div id="box-bottom">
+				<button class="cancle" onclick="js_methodOut()">取消</button>
+				<button class="ensure" onclick="groupMsg()">确定</button>
+			</div>
+			
+		</div>	
+	<script>
+	// var input = document.querySelector('input');
+	// input.addEventListener('change',inputFile);
+	
+	</script>
+	<script>
+		//初始化 websocket
+		var remote=require('electron').remote;
+		var ws = new WebSocket("ws://47.104.166.27:6018"); 
+		var userCardId=remote.getGlobal('sharedObject').name;  
+  		console.log (ws.readyState);         
+        ws.onopen = function()
+        {
+         // Web Socket 已连接上，使用 send() 方法发送数据
+        console.log("service is connected");
+        };
+                
+        ws.onmessage = function (evt) 
+        { 
+        var received_msg = evt.data;
+         console.log(received_msg);
+        };
+                
+        ws.onclose = function()
+        { 
+        // websocket 关闭
+        console.log("连接已关闭..."); 
+		};
+		
+		/* **************
+			文件上传模块 
+		***************** */
+		//$(".box").hide(); //先让div隐藏
+		function js_methodIn(){
+			$(".box").fadeIn("slow");//淡入淡出效果 显示div
+			$("#mainContainer").css("filter","blur(1px)");
+		}
+		function js_methodOut(){
+			$("#box-container-fileshow").empty();
+			$(".box").fadeOut("normal");//淡入淡出效果 隐藏div
+			$("#mainContainer").css("filter","blur(0px)");
+			
+			
+		}
+		//初始化 ftp
+		let Client = require('ssh2-sftp-client');
+		let gaze = require('gaze');
+		let sftp = new Client();
+    	sftp.connect({
+        host: '47.104.166.27',
+        port: '22',
+        username: 'sun',
+        password: '123456'
+    		}).then(() => {
+        console.log("ftp connected");
+    		}).then(() =>{
+        console.log("上传完成");
+        var demoObj = {'request':'4A','method':'00','cardId':'T0038','stations':'1','station1':'2','ports':'6','pile1':'6002','pile2':'6000','port1':'6004','port2':'6006','port3':'6008','port4':'6010','IP1':'192.168.1.166','IP2':'192.168.167','fileCount':'2','file1':'ctrcfg.ini','size1':'6000','file2':'cfg.ini','size2':'7000'};
+        demoJson = JSON.stringify(demoObj); //数据打包成json
+        console.log(demoJson);
+        ws.send(demoJson);
+        console.log("已回复");
+    		}).catch((err) => {
+        console.log(err, 'catch error');
+    		});
+		//文件拖拽
+		var remotefilePath;
+		var fileNameArr = [];
+		var fileSizeArr = [];
+		var filePathArr = [];
+		function inputFile(input){
+		var curFiles = input.files;
+		var filecounts = curFiles.length;
+		var oFile;
+		var filePath;
+		console.log(curFiles[0].size);
+		//选择文件
+		for (var j =0;j <filecounts;j++){
+   			oFile = curFiles[j];
+			filePath = oFile.path.replace(/\\/g,"\/");
+			fileSize = Math.floor(oFile.size/1024*100)/100;  //向下取整，保留两位小数 
+			fileNameArr.push(oFile.name);
+			fileSizeArr.push(oFile.size);
+			filePathArr.push(filePath);
+			fileChild = '<div class="filelist"><img src="../img/fileicon2.png" width="30px" height="30px"><span class="filename">'+ oFile.name +'<span class="filesize">('+ fileSize +'k)</span></span></div>';
+			$("#box-container-fileshow").append(fileChild);
+  			//remotefilePath = './' + userCardId + '/' + oFile.name;
+			console.log('------------------------------------');
+			console.log(j);
+   			console.log('File(s) you dragged here: ',filePath);
+			console.log("File(s)'s name you put : ",oFile.name);
+			console.log("File(s)'s size you put : ",fileSize); 
+		    console.log('------------------------------------');
+		 }
+	}
+		//拖拽文件到框
+		window.onload = function () {
+		  var oBox = document.getElementById('box-container-fileshow');
+		  var drag = document.getElementById('dragtext');
+  		oBox.ondragenter = function(){
+		drag.innerHTML = '请释放鼠标';
+		console.log("文件移入");
+  		};
+  		oBox.ondragover = function(){
+  		 return false;
+  		};
+  		oBox.ondragleave = function(){
+    	drag.innerHTML = '或拖拽文件到下框';
+    	console.log('leave');
+ 		 };
+  
+  		oBox.ondrop = function(ev){
+		drag.innerHTML = '或拖拽文件到下框';
+		var filecounts = ev.dataTransfer.files.length;
+		var oFile;
+		var filePath;
+		console.log(filecounts);
+		for (var i =0;i <filecounts;i++){
+   			oFile = ev.dataTransfer.files[i];
+			filePath = oFile.path.replace(/\\/g,"\/");
+			fileSize = Math.floor(oFile.size/1024*100)/100;  //向下取整，保留两位小数 
+			fileNameArr.push(oFile.name);
+			fileSizeArr.push(oFile.size);
+			fileChild = '<div class="filelist"><img src="../img/fileicon2.png" width="30px" height="30px"><span class="filename">'+ oFile.name +'<span class="filesize">('+ fileSize +'k)</span></span></div>';
+			$("#box-container-fileshow").append(fileChild);
+  			//remotefilePath = './' + userCardId + '/' + oFile.name;
+			// console.log('------------------------------------');
+			// console.log(i);
+   			// console.log('File(s) you dragged here: ',filePath);
+			// console.log("File(s)'s name you put : ",oFile.name);
+			// console.log("File(s)'s size you put : ",fileSize); 
+		    // console.log('------------------------------------');
+		  
+   //sftp.put(filePath,remotefilePath);
+   
+  //  for(let f of ev.dataTransfer.files){
+  //    filePath = f.path.replace(/\\/g,"\/");
+  //    console.log('File(s) you dragged here: ',filePath);
+  //    sftp.put(filePath,'./T0038/pileMonitorUI');
+  //  }
+  // console.log(oFile);
+   //console.log(oFile.name);
+		 }
+		 console.log(fileNameArr);
+		 console.log(fileSizeArr);
+  		};
+ 		};
+
+		
+	// var valueTd = $("#pileTable").rows.length;
+	/************************
+	****左侧下拉列表模块*****
+	*************************/
+	//最后一行合并单元格
+	
+	// var cities = new Object();
+	// var projects = new Object();
+	//初始化lowdb
+	const low = require('lowdb')
+    const FileSync = require('lowdb/adapters/FileSync')
+    const adapterProvince = new FileSync('province.json')//省
+    const adapterProject = new FileSync('project.json')//项目
+    const adapterStation = new FileSync('station.json')//站点
+    const adapterPile = new FileSync('pile.json')//分桩
+    const province = low(adapterProvince) //lowdb 接管json文件
+    const project = low(adapterProject)
+    const station = low(adapterStation)
+	const pile = low(adapterPile)
+	var cities = project.value();//定义省对应的项目值
+	var projects = station.value();//定义项目对应的站点值
+	var stations = pile.value();//定义站点对应的桩值
+	var listPro = document.getElementById("city");//获取省 select
+	var table = document.getElementById('pileTable'); 
+	var rowNum = table.rows.length; //表格的行数
+	var listProSN; //添加省信息索引
+	var checkbox,checkall;
+	//var pilePortsUp = [],pilePortsNoup = [], pileIPs = [];//桩号、端口号、IP
+	var getProvinceValue = province.get('province').value();//取出 province 的 value
+	//添加省信息
+	for(var provinceSN = 0; provinceSN < getProvinceValue.length; provinceSN++){
+		listProSN = provinceSN + 1;
+		console.log(getProvinceValue[provinceSN]);
+		listPro.options[listProSN] = new Option();
+		listPro.options[listProSN].text = getProvinceValue[provinceSN];
+		listPro.options[listProSN].value = getProvinceValue[provinceSN];
+
+		
+	}
+	//组上传文件报文(桩数量、端口、IP、文件数量、文件名、文件大小)
+	function groupMsg(){
+		var stationUploadCount = 1; //需要更新的站点数量（默认为 1 ）
+		var pileUploadCount= 0;	//需要更新的桩数量
+		var pileCount = checkbox.length-1; 	//该站点桩数量
+		var pileUploadPorts = new Array();	//需要更新的端口号
+		var unpileUploadPorts = new Array();	//不需要更新的端口号
+		var pileUploadIPs = new Array(); 	//需要更新的 IP
+		var fileUploadCount = fileNameArr.length;	//需要更新的文件数量
+		//需要更新的文件名 fileNameArr
+		//需要更新的文件大小 fileSizeArr
+		var i,j,m,n,p,q;
+		var fileUploadMsg = new Object(); 
+		var remotefilePath,localfilepath;
+		fileUploadMsg['request'] = '4A'; //请求头
+		fileUploadMsg['method'] = '00';  //请求方法
+		fileUploadMsg['cardId'] = userCardId; //用户工号
+		fileUploadMsg['stations'] = stationUploadCount; //需要更新的站点数量
+		
+		//console.log(checkbox);
+		for( i=0; i<checkbox.length-1;i++){
+			if(checkbox[i].checked == true){
+				pileUploadCount += 1;
+			//	console.log(table.rows[i+1].cells[2].innerHTML);
+			pileUploadPorts.push(table.rows[i+1].cells[2].innerHTML); //需要更新的桩端口信息
+			pileUploadIPs.push(table.rows[i+1].cells[3].innerHTML);
+
+			
+			}
+			else{
+				console.log("false");
+				unpileUploadPorts.push(table.rows[i+1].cells[2].innerHTML); //不需要更新的桩端口信息
+			}
+			// console.log(checkbox[i].checked);
+		}
+		//要上传的文件名和文件大小(保持有序--文件名对应文件大小)
+		// for( m=0; m<fileUploadCount;m++){
+		// 	console.log(fileNameArr[m]);
+		// 	console.log(fileSizeArr[m]);
+		// }
+		fileUploadMsg['station1'] = pileUploadCount;
+		fileUploadMsg['ports'] = pileCount;
+
+		for ( m=0; m<pileUploadPorts.length; m++){
+			fileUploadMsg['pileup'+ String(m)] = pileUploadPorts[m];
+			
+		}
+		for ( n=0; n<unpileUploadPorts.length; n++){
+			fileUploadMsg['unpileup'+ String(n)] = unpileUploadPorts[n];
+			
+		}
+		for ( j=0; j<pileUploadIPs.length; j++){
+			fileUploadMsg['unpileup'+ String(j)] = pileUploadIPs[j];
+			
+		}
+		for( p=0; p<fileUploadCount; p++){
+			fileUploadMsg['file'+ String(p)] = fileNameArr[p];
+			fileUploadMsg['filesize'+ String(p)] = fileSizeArr[p];
+		}
+
+		console.log(fileUploadMsg); //组报文 完成
+		console.log("需要更新 " + pileUploadCount + " 台桩");
+		console.log("要求更新的桩端口号 ： " + pileUploadPorts);
+		console.log("未要求更新桩的端口号 ： "+ unpileUploadPorts);
+		console.log("要更新桩的IP ： " +pileUploadIPs);
+		//pilePortsUp.push(pilePortsNoup);
+		//console.log("该站点所有端口号 ： " + pilePortsUp);
+		// pileUploadPorts = [];
+		// unpileUploadPorts = []; 
+		// pileUploadIPs = [];
+		//ftp 上传文件
+		for( q=0; q<fileUploadCount; q++){
+			remotefilePath = './' + userCardId + '/' + fileNameArr[q];
+			localfilepath = filePathArr[q];
+			console.log(remotefilePath + "***" + localfilepath);
+		}
+	}
+	//显示站点各个桩信息
+	function showPiles(listStation){
+		var stationValue = listStation.value;
+		console.log(stations[stationValue]);
+		var i,j,m;
+		var n = 0;
+		
+		
+		//显示非该站点前先删除该站点行
+		//console.log(rowNum);
+    	for (i=1;i<rowNum;i++){
+		table.deleteRow(i);
+		//console.log(i);
+        rowNum=rowNum-1;
+        i=i-1;
+    	}
+		if(typeof(stations[stationValue]) == 'undefined'){
+			return;
+		}
+		if(stationValue == '0'){
+			return;
+		}
+	//	var tableName = document.getElementById("pileTable");
+	var pileNum=pilePort=pileIP=chargeStatus=updateTime=filesName='null';
+	var tableChild;
+		
+		for(m=0;m<stations[stationValue].length;m = m+3){
+			n++;
+			pileNum = stations[stationValue][m];
+			pilePort = stations[stationValue][m+1];
+			pileIP = stations[stationValue][m+2];
+			tableChild = '<tr><td><input name="pile" type="checkbox" id="checkbox" value="" /></td><td id="pileNum">'+ pileNum +'</td><td>'+ pilePort +'</td><td>'+ pileIP +'</td><td>'+ chargeStatus +'</td><td>'+ updateTime +'</td><td>'+ filesName +'</td><td><a href="#" onclick="js_methodIn()">'+ "上传文件" +  '</a><a href="#" onclick="js_methodOut()">'+ "下载文件" +  '</a> <a href="#">'+ "重启" +'</a></td></tr>';
+			lastChild = '<tr><td><input name="pile" type="checkbox" id="checkbox" value="" /></td><td id="pileAction" ><button id="pileUpload" onclick="js_methodIn()">上传文件</button><button>下载文件</button><button>重启</button></td></tr>';
+			$("#pileTable").append(tableChild);
+			$("input[type=checkbox]").val(n);
+			//console.log($("input[type=checkbox]").val());
+			if((m+3)==stations[stationValue].length){
+				$("#pileTable").append(lastChild);	//添加最后一行
+				//$("input[type=checkbox]").val("all");	//给每个checkbox赋值
+				//console.log($("input[type=checkbox]").val());
+	 			var valueTd = table.rows[0].cells.length;
+				//console.log(valueTd);
+				$("#pileAction").attr("colspan",valueTd);
+			    rowNum=table.rows.length;
+				//console.log(rowNum);
+			}
+			//console.log(stations[listStation.options[n].value]);
+		}
+		//checkout 多选、单选
+		 checkbox = document.all('checkbox');
+		 checkall = document.getElementById('checkall');
+		 checkall.checked = false;
+		//console.log(checkbox[0].value);
+		checkall.addEventListener('click',function(){
+				//console.log(checkall.checked);
+                 
+				 if (checkbox.length == undefined) {//一个选项时
+					 checkbox.checked = checkall.checked;
+				 }else{
+					  for (var i = 0; i < checkbox.length; i++) {//多个选项时
+						  checkbox[i].checked = this.checked;
+						 // console.log(checkbox[i].checked);
+					  }
+				 }
+			  },false);
+		// $("#checkbox").click(function(){
+		// 	alert(this.checked);
+		// 	//$("#checkbox").checked = true;
+		// });
+
+		
+
+
+		
+	}
+	//选择站点--通过一级列表中的 project 找到与之匹配的 station
+	function setStation(listProject,listStation){
+		var projectValue = listProject.value;
+		//console.log(projectValue);
+		var i,j,m,n;
+		if(typeof(projects[projectValue]) == 'undefined'){
+			return;
+		}
+		if(projectValue == '0'){
+			return;
+		}
+		for(m=0;m<projects[projectValue].length;m++){
+			n = m + 1;
+			listStation.options[n] = new Option();
+			listStation.options[n].text = projects[projectValue][m];
+			listStation.options[n].value = projects[projectValue][m];
+			//console.log(listStation.options[n].text);
+			//console.log(stations[listStation.options[n].value]);
+		}
+		
+	}
+    //选择项目--通过一级列表中的 province 找到与之匹配的 project
+	function setProject(listProvince,listProject){
+		var provinceValue = listProvince.value;
+		//console.log(provinceValue);
+		//console.log(listProject);
+		var projectValue;
+		var i,j;
+		if(typeof(cities[provinceValue]) == 'undefined'){
+			return;
+		}
+		if(provinceValue == '0'){
+			return;
+		}
+		for(i=0;i<cities[provinceValue].length;i++){
+			j = i + 1;
+			listProject.options[j] = new Option();
+			listProject.options[j].text = cities[provinceValue][i];
+			listProject.options[j].value = cities[provinceValue][i];
+		//	console.log(listProject.options[j].text);
+		}
+		
+	}
+
+	</script>
+	
+	 
+ </body>
+ </html>

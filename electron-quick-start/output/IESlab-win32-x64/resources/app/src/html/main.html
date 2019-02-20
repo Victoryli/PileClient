@@ -1,0 +1,141 @@
+<!doctype html>
+ <html lang = "zh-CN">
+ <head>
+
+     <meta charset="utf-8">
+     <meta name="description" content="this is a checkbox example">
+	 <meta name="keywords" content="checkbox,html,js">
+	 <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+	 <link rel="stylesheet" href="../cssProject/main.css">
+     <title>主界面</title>
+
+     <script type="text/javascript">
+         window.onload = function () {
+             document.getElementById('city').addEventListener('change',function(){
+                 console.log("当前选项是:"+this.value);
+             },false);
+         }
+     </script>
+ </head>
+ <body>
+	 <div id="topContainer">
+		<br>
+		IESlab
+		<br>
+	 </div>
+	 <div id="leftContainer">
+		<form name="form1" action="" method="get">
+			<!-- <p >省份</p> -->
+         <select id = "city" onChange="setProject(this,this.form.projects);">
+				 
+			 <option class="cityOption" value="0">--选择省--</option>
+			 <option value="山东省">山东省</option>
+    		 <option value="河南省">河南省</option>
+			
+                     
+		 </select>
+		 <!-- <p >项目</p> -->
+		
+		
+		 <select name="projects" id="project" onChange="setStation(this,this.form.stations);">
+			 <option value="0">--选择项目--</option>
+		 </select>
+		
+		 
+		<!-- <p>站点：</p> -->
+		 <select name="stations" id="station">
+			<option value="0">--选择站点--</option>
+		</select>
+		</form>
+		
+	 </div>
+
+	 <div id="mainContainer">
+		<table width='100%' class="gridtable" id="pileTable">
+
+			<tr>
+				<th><input name="pile" type="checkbox" value=""  />桩号</th><th>端口号</th><th>本机IP</th><th>充电状态</th><th>上次更新程序时间</th><th>更新程序名</th><th>操作</th>
+			</tr>
+			<tr>
+				<td id="pileNum"><input name="pile" type="checkbox" value="" />03710001</td><td>20088</td><td>192.168.1.166</td><td>充电中</td><td>2019.01.06</td><td>ctrcfg.ini cfg.ini ctrcfg.ini cfg.ini</td><td><a href="#" onclick="js_methodIn()">上传文件  </a><a href="#" onclick="js_methodOut()">下载文件  </a> <a href="#">重启</a></td>
+			</tr>
+			
+			<tr>
+				<td><input name="pile" type="checkbox" value="" />03710001</td><td>20088</td><td>192.168.1.166</td><td>充电中</td><td>2019.01.06</td><td>ctrcfg.ini cfg.ini ctrcfg.ini cfg.ini</td><td>上传文件 下载文件 重启</td>
+			</tr>
+			<tr>
+				<td id="pileAction" ><input name="pile" type="checkbox" value="" /><button>上传文件</button><button>下载文件</button><button>重启</button></td>
+			</tr>
+			
+		</table>	
+	</div>
+	<script>
+	//	$("#leftContainer").hide(); //先让div隐藏
+		function js_methodIn(){
+			$("#leftContainer").fadeIn("slow");//淡入淡出效果 显示div
+			console.log("Hello");
+		}
+		function js_methodOut(){
+			//$("#leftContainer").fadeOut("slow");//淡入淡出效果 显示div
+			$("#mainContainer").css("filter","blur(1px)");
+			console.log("Hello");
+		}
+	// var valueTd = $("#pileTable").rows.length;
+	 var table = document.getElementById('pileTable');
+	 var valueTd = table.rows[0].cells.length;
+	// console.log(valueTd);
+	$("#pileAction").attr("colspan",valueTd);
+	var cities = new Object();
+	var projects = new Object();
+	cities['山东省']=new Array('济南奔驰', '滨州火车站', '日照公交公司');
+	cities['河南省']=new Array('景政电力', '开封公交车站', '安阳4S店');
+	projects['济南奔驰'] = new Array('站点1','站点2');
+	projects['滨州火车站'] = new Array('站点1','站点2');
+	projects['日照公交公司'] = new Array('站点1','站点2');
+	function setStation(project,station){
+		var projectValue = project.value;
+		console.log(projectValue);
+		var i,j,m,n;
+		if(typeof(projects[projectValue]) == 'undefined'){
+			return;
+		}
+		if(projectValue == '0'){
+			return;
+		}
+		for(m=0;m<projects[projectValue].length;m++){
+			n = m + 1;
+			station.options[n] = new Option();
+			station.options[n].text = projects[projectValue][m];
+			station.options[n].value = projects[projectValue][m];
+			console.log(station.options[n].text);
+		}
+		
+	}
+
+	function setProject(province,project){
+		var provinceValue = province.value;
+		console.log(provinceValue);
+		console.log(project);
+		var projectValue;
+		var i,j;
+		if(typeof(cities[provinceValue]) == 'undefined'){
+			return;
+		}
+		if(provinceValue == '0'){
+			return;
+		}
+		for(i=0;i<cities[provinceValue].length;i++){
+			j = i + 1;
+			project.options[j] = new Option();
+			project.options[j].text = cities[provinceValue][i];
+			project.options[j].value = cities[provinceValue][i];
+			console.log(project.options[j].text);
+		}
+		
+	}
+
+	</script>
+	
+	 
+ </body>
+ </html>
